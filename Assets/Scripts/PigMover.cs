@@ -12,10 +12,13 @@ public class PigMover : MonoBehaviour
     [SerializeField] private GameObject block1;
     [SerializeField] private GameObject block2;
     [SerializeField] private GameObject portal;
+    [SerializeField] private GameObject winText;
+    [SerializeField] private GameObject gameOverText;
     private float speed = 5.0f;
     private float horizontalInput;
     private float nextY = -1;
     private float nextX = 5;
+    private float minY = 0;
     private bool gameOver = false;
     
     // Start is called before the first frame update
@@ -36,6 +39,11 @@ public class PigMover : MonoBehaviour
                 nextX = nextX + 7;
                 nextY = nextY + Random.Range(0, 2) * 2 - 1;
             }
+
+            if (nextY < minY)
+            {
+                minY = nextY;
+            }
         }
         portal.transform.position = new Vector3(nextX, nextY, 0);
     }
@@ -45,6 +53,12 @@ public class PigMover : MonoBehaviour
     {
         if (gameOver==false)
         {
+            if (transform.position.y < minY - 5)
+            {
+                gameOver = true;
+                print("You lose");
+                gameOverText.SetActive(true);
+            }
             transform.rotation = Quaternion.identity;
             transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         
@@ -66,6 +80,8 @@ public class PigMover : MonoBehaviour
         if (other.gameObject.name == "Portal")
         {
             print("You win");
+            Instantiate(winText, new Vector3(transform.position.x + 3, transform.position.y + 3, 1), transform.rotation);
+            winText.SetActive(true);
         }
     }
 }
